@@ -362,31 +362,115 @@ function clearBoard() {
 }
 
 function createPiece(type, square) {
-    const color = (type === type.toUpperCase()) ? 0xffffff : 0x444444;
-    const material = new THREE.MeshStandardMaterial({ color });
+    const color = (type === type.toUpperCase()) ? 0xe0e0e0 : 0x303030;
+    const material = new THREE.MeshStandardMaterial({ color, metalness: 0.3, roughness: 0.6 });
 
-    let geometry;
+    const pieceGroup = new THREE.Group();
     const pieceType = type.toLowerCase();
+
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.15, 32), material);
+    base.position.y = 0.075;
+    pieceGroup.add(base);
+
     switch (pieceType) {
-        case 'p': geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 16); break;
-        case 'r': geometry = new THREE.CylinderGeometry(0.35, 0.35, 0.4, 4); break;
-        case 'n': geometry = new THREE.BoxGeometry(0.3, 0.5, 0.3); break; // Simple knight
-        case 'b': geometry = new THREE.ConeGeometry(0.3, 0.7, 16); break;
-        case 'q': geometry = new THREE.CylinderGeometry(0.1, 0.4, 0.8, 16); break;
-        case 'k': geometry = new THREE.CylinderGeometry(0.2, 0.3, 0.9, 6); break;
-        default: return;
+        case 'p': { // Pawn
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 32, 16), material);
+            head.position.y = 0.3;
+            pieceGroup.add(head);
+            break;
+        }
+        case 'r': { // Rook
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.5, 32), material);
+            body.position.y = 0.15 + 0.25;
+            pieceGroup.add(body);
+            const top = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.2, 32), material);
+            top.position.y = 0.15 + 0.5 + 0.1;
+            pieceGroup.add(top);
+            // Crenellations
+            for (let i = 0; i < 4; i++) {
+                const c = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.1), material);
+                const angle = i * Math.PI / 2;
+                c.position.set(Math.cos(angle) * 0.3, top.position.y + 0.1, Math.sin(angle) * 0.3);
+                pieceGroup.add(c);
+            }
+            break;
+        }
+        case 'n': { // Knight
+            // A more complex shape for the knight
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.2, 0.4, 32), material);
+            body.position.y = 0.15 + 0.2;
+            pieceGroup.add(body);
+            const neck = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.4, 0.2), material);
+            neck.position.y = body.position.y + 0.3;
+            neck.rotation.z = -Math.PI / 8;
+            pieceGroup.add(neck);
+            const head = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.25, 0.2), material);
+            head.position.y = neck.position.y + 0.1;
+            head.position.x = -0.1;
+            pieceGroup.add(head);
+            break;
+        }
+        case 'b': { // Bishop
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.2, 0.6, 32), material);
+            body.position.y = 0.15 + 0.3;
+            pieceGroup.add(body);
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 32, 16), material);
+            head.position.y = body.position.y + 0.3;
+            pieceGroup.add(head);
+            const tip = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 16), material);
+            tip.position.y = head.position.y + 0.2;
+            pieceGroup.add(tip);
+            break;
+        }
+        case 'q': { // Queen
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.25, 0.7, 32), material);
+            body.position.y = 0.15 + 0.35;
+            pieceGroup.add(body);
+            const head = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.15, 32), material);
+            head.position.y = body.position.y + 0.4;
+            pieceGroup.add(head);
+            // Spikes
+            for (let i = 0; i < 8; i++) {
+                const spike = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.2, 16), material);
+                const angle = i * Math.PI / 4;
+                spike.position.set(Math.cos(angle) * 0.3, head.position.y + 0.1, Math.sin(angle) * 0.3);
+                spike.rotation.z = Math.PI;
+                pieceGroup.add(spike);
+            }
+            break;
+        }
+        case 'k': { // King
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.3, 0.8, 32), material);
+            body.position.y = 0.15 + 0.4;
+            pieceGroup.add(body);
+            const top = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.15, 32), material);
+            top.position.y = body.position.y + 0.45;
+            pieceGroup.add(top);
+            // Cross
+            const crossV = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.3, 0.08), material);
+            crossV.position.y = top.position.y + 0.15;
+            pieceGroup.add(crossV);
+            const crossH = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.08, 0.08), material);
+            crossH.position.y = top.position.y + 0.2;
+            pieceGroup.add(crossH);
+            break;
+        }
     }
 
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.castShadow = true;
-    mesh.userData.piece = type;
-    mesh.userData.square = square;
-    
-    const pos = squareToPosition(square);
-    mesh.position.set(pos.x, 0.2, pos.z);
+    pieceGroup.traverse(node => {
+        if (node.isMesh) {
+            node.castShadow = true;
+            node.userData.square = square; // Propagate square data to all meshes for raycasting
+        }
+    });
 
-    pieceMeshes[square] = mesh;
-    boardGroup.add(mesh);
+    const pos = squareToPosition(square);
+    pieceGroup.position.set(pos.x, 0, pos.z);
+    pieceGroup.userData.piece = type;
+    pieceGroup.userData.square = square;
+
+    pieceMeshes[square] = pieceGroup;
+    boardGroup.add(pieceGroup);
 }
 
 function squareToPosition(square) {
