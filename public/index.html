@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAN 3D Chess</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div id="main-container">
+        <div id="scene-container"></div>
+        <div id="ui-panel">
+            <div id="home-screen">
+                <h1>3D LAN Chess</h1>
+                <button id="create-room-btn">Create New Game Room</button>
+            </div>
+
+            <div id="room-screen" style="display: none;">
+                <h2 id="room-id-display"></h2>
+                
+                <div class="invite-section">
+                    <h3>Invite Links</h3>
+                    <div class="link-container">
+                        <p><strong>Player URL:</strong></p>
+                        <div class="url-group">
+                            <input type="text" id="player-invite-url" readonly>
+                            <button class="copy-btn" data-target="#player-invite-url">Copy</button>
+                        </div>
+                    </div>
+                    <div class="link-container">
+                        <p><strong>Spectator URL:</strong></p>
+                        <div class="url-group">
+                            <input type="text" id="spectator-invite-url" readonly>
+                            <button class="copy-btn" data-target="#spectator-invite-url">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="status-panel">
+                    <p id="turn-indicator"></p>
+                    <p id="check-indicator"></p>
+                    <p id="game-result"></p>
+                    <p id="draw-offer-status"></p>
+                </div>
+
+                <div id="seats-panel">
+                    <div class="seat" id="white-seat">
+                        <span>White: <span id="white-player-name"></span></span>
+                        <button id="take-white-btn">Take White</button>
+                    </div>
+                    <div class="seat" id="black-seat">
+                        <span>Black: <span id="black-player-name"></span></span>
+                        <button id="take-black-btn">Take Black</button>
+                    </div>
+                </div>
+
+                <div id="controls-panel">
+                    <button id="leave-seat-btn">Leave Seat</button>
+                    <button id="flip-board-btn">Flip View</button>
+                    <hr>
+                    <button id="resign-btn">Resign</button>
+                    <button id="offer-draw-btn">Offer Draw</button>
+                    <button id="accept-draw-btn">Accept Draw</button>
+                    <button id="decline-draw-btn">Decline Draw</button>
+                    <hr>
+                    <button id="restart-btn">Restart Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="promotion-modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Promote Pawn</h3>
+            <div id="promotion-choices">
+                <button data-piece="q">Queen</button>
+                <button data-piece="r">Rook</button>
+                <button data-piece="b">Bishop</button>
+                <button data-piece="n">Knight</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="webgl-fallback" style="display: none;">
+        <p><strong>Warning:</strong> WebGL is not supported by your browser. A simple 2D board is shown instead.</p>
+        <div id="fallback-board-container"></div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "/scripts/three.module.min.js",
+                "three/addons/": "/scripts/",
+                "chess.js": "/scripts/chess.js"
+            }
+        }
+    </script>
+    <script type="module" src="/app.js"></script>
+</body>
+</html>

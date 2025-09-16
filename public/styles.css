@@ -1,0 +1,233 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    overflow: hidden;
+    height: 100%;
+}
+
+#main-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+#scene-container {
+    flex-grow: 1;
+    height: 100%;
+    position: relative;
+}
+
+#ui-panel {
+    width: 320px;
+    min-width: 300px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#home-screen {
+    text-align: center;
+    margin: auto;
+}
+
+#home-screen h1 {
+    font-size: 2rem;
+    color: #444;
+}
+
+#create-room-btn {
+    font-size: 1.2rem;
+    padding: 12px 24px;
+}
+
+#room-id-display {
+    word-break: break-all;
+    background: #eee;
+    padding: 8px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.invite-section h3 {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-top: 0;
+}
+
+.link-container {
+    margin-bottom: 15px;
+}
+
+.link-container p {
+    margin: 0 0 5px 0;
+    font-weight: 500;
+}
+
+.url-group {
+    display: flex;
+}
+
+.url-group input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    background: #f9f9f9;
+    font-family: monospace;
+    font-size: 0.9rem;
+    min-width: 0; /* Prevents input from overflowing flex container */
+}
+
+.copy-btn {
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+    border-left: none;
+}
+
+#status-panel {
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+#status-panel p {
+    margin: 5px 0;
+    font-weight: 500;
+}
+
+#turn-indicator.turn-w { color: #000; }
+#turn-indicator.turn-b { color: #d10000; }
+#check-indicator { color: #ff4136; font-weight: bold; }
+#game-result { font-weight: bold; color: #0074D9; }
+
+#seats-panel .seat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+#seats-panel .seat span {
+    font-weight: bold;
+}
+
+#white-player-name, #black-player-name {
+    font-style: italic;
+    color: #555;
+}
+
+#controls-panel button, button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+button:hover {
+    background-color: #e8e8e8;
+    border-color: #bbb;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+#resign-btn { background-color: #FF851B; color: white; border: none; }
+#resign-btn:hover { background-color: #e6730d; }
+
+#accept-draw-btn { background-color: #2ECC40; color: white; border: none; }
+#accept-draw-btn:hover { background-color: #28b338; }
+
+#decline-draw-btn { background-color: #FF4136; color: white; border: none; }
+#decline-draw-btn:hover { background-color: #e62e24; }
+
+#promotion-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+#promotion-choices {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+#promotion-choices button {
+    width: auto;
+    padding: 15px 20px;
+}
+
+#webgl-fallback {
+    padding: 20px;
+    text-align: center;
+    background: #fff1c6;
+    border-bottom: 1px solid #e0c351;
+}
+
+#fallback-board-container {
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(8, 40px);
+    grid-template-rows: repeat(8, 40px);
+    width: 320px;
+    height: 320px;
+    border: 2px solid #333;
+}
+
+.fallback-square {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.fallback-square.light { background-color: #f0d9b5; }
+.fallback-square.dark { background-color: #b58863; }
+
+@media (max-width: 768px) {
+    #main-container {
+        flex-direction: column-reverse;
+    }
+    #ui-panel {
+        width: 100%;
+        height: 40vh;
+        max-height: 50vh;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    }
+    #scene-container {
+        height: 60vh;
+    }
+}
