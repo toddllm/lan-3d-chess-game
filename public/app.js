@@ -486,9 +486,7 @@ function onWindowResize() {
 }
 
 function onBoardClick(event) {
-    console.log('onBoardClick triggered');
     if (!playerColor || playerColor !== state.turn || state.result || !clientChess) {
-        console.log('Click blocked:', { playerColor, turn: state.turn, result: state.result });
         return;
     }
 
@@ -502,7 +500,6 @@ function onBoardClick(event) {
     raycaster.setFromCamera(mouse, camera);
 
     const intersects = raycaster.intersectObjects(boardGroup.children, true);
-    console.log(`Raycaster intersected ${intersects.length} objects`);
 
     if (intersects.length > 0) {
         const clickedObject = intersects[0].object;
@@ -516,33 +513,24 @@ function onBoardClick(event) {
             currentObject = currentObject.parent;
         }
 
-        console.log(`Identified target square: ${targetSquare}`);
         if (!targetSquare) return;
 
         if (selectedPiece) {
-            console.log(`Second click. From: ${selectedPiece.userData.square}, To: ${targetSquare}`);
             const from = selectedPiece.userData.square;
             const to = targetSquare;
 
             const move = clientChess.moves({ square: from, verbose: true }).find(m => m.to === to);
             if (move) {
-                console.log('Move is legal. Sending to server.');
                 handleMove(from, to);
-            } else {
-                console.log('Move is illegal.');
             }
             clearHighlights();
             selectedPiece = null;
         } else {
             const piece = clientChess.get(targetSquare);
-            console.log(`First click. Piece on square:`, piece);
             if (piece && piece.color === playerColor) {
-                console.log(`Selecting piece:`, piece);
                 selectedPiece = pieceMeshes[targetSquare];
                 highlightPiece(selectedPiece);
                 showLegalMoves(targetSquare);
-            } else {
-                console.log('No piece selected or not your color.');
             }
         }
     }
@@ -565,9 +553,13 @@ function showPromotionDialog(from, to) {
     promotionModal.dataset.to = to;
 }
 
-function highlightPiece(pieceMesh) {
-    if (!pieceMesh) return;
-    pieceMesh.material.emissive.setHex(0x555500);
+function highlightPiece(pieceGroup) {
+    if (!pieceGroup) return;
+    pieceGroup.traverse(node => {
+        if (node.isMesh) {
+            node.material.emissive.setHex(0x555500);
+        }
+    });
 }
 
 function showLegalMoves(square) {
@@ -587,7 +579,11 @@ function showLegalMoves(square) {
 
 function clearHighlights() {
     if (selectedPiece) {
-        selectedPiece.material.emissive.setHex(0x000000);
+        selectedPiece.traverse(node => {
+            if (node.isMesh) {
+                node.material.emissive.setHex(0x000000);
+            }
+        });
     }
     legalMoveMarkers.forEach(marker => boardGroup.remove(marker));
     legalMoveMarkers.length = 0;
